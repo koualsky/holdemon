@@ -1,0 +1,439 @@
+{% extends "game/base.html" %}
+{% load game_extras %}
+
+{% block content %}
+
+<!-- To fade effect -->
+<!--<div id="hideAll"></div>-->
+
+<!-- NAV -->
+<nav class="navbar navbar-dark bg-dark p-0 m-0">
+{% if user.is_authenticated %}
+
+    <a class="navbar-text text-light pl-3" style="cursor: default;">{{ user }}: <span id="player_money">{{ request.user.player.money }}</span> $</a>
+    <div class="btn-group">
+        <a href="{% url 'play' %}" class="btn btn-success my-0 my-sm-0" id="refresh">Refresh</a>
+        <a href="{% url 'exit' %}" class="btn btn-danger my-0 my-sm-0" onclick="refreshuj()">Exit game</a>
+    </div>
+
+{% endif %}
+</nav>
+
+<!-- GAME STATUS -->
+<div class="progress">
+  {% if table.game_state == 'ready' %}
+    <div class="progress-bar progress-bar-striped progress-bar-animated text-dark" role="progressbar" style="width: 15%" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100">Ready</div>
+    <div class="progress-bar bg-secondary text-dark border-left" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">1</div>
+    <div class="progress-bar bg-secondary text-dark border-left" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">2</div>
+    <div class="progress-bar bg-secondary text-dark border-left" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">3</div>
+    <div class="progress-bar bg-secondary text-dark border-left" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">4</div>
+    <div class="progress-bar bg-secondary text-dark border-left" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">Last round!</div>
+    <div class="progress-bar bg-secondary text-dark border-left" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">Winner</div>
+  {% endif %}
+
+  {% if table.game_state == 'small_blind' or table.game_state == 'big_blind' %}
+    <div class="progress-bar progress-bar-striped progress-bar-animated text-dark" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">1</div>
+    <div class="progress-bar bg-secondary text-dark border-left" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">2</div>
+    <div class="progress-bar bg-secondary text-dark border-left" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">3</div>
+    <div class="progress-bar bg-secondary text-dark border-left" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">4</div>
+    <div class="progress-bar bg-secondary text-dark border-left" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">Last round!</div>
+    <div class="progress-bar bg-secondary text-dark border-left" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">Winner</div>
+  {% endif %}
+
+  {% if table.game_state == 'give_2' %}
+    <div class="progress-bar progress-bar-striped progress-bar-animated text-dark" role="progressbar" style="width: 35%" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100">2</div>
+    <div class="progress-bar bg-secondary text-dark border-left" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">3</div>
+    <div class="progress-bar bg-secondary text-dark border-left" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">4</div>
+    <div class="progress-bar bg-secondary text-dark border-left" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">Last round!</div>
+    <div class="progress-bar bg-secondary text-dark border-left" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">Winner</div>
+  {% endif %}
+
+  {% if table.game_state == 'give_3' %}
+    <div class="progress-bar progress-bar-striped progress-bar-animated text-dark" role="progressbar" style="width: 45%" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100">3</div>
+    <div class="progress-bar bg-secondary text-dark border-left" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">4</div>
+    <div class="progress-bar bg-secondary text-dark border-left" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">Last round!</div>
+    <div class="progress-bar bg-secondary text-dark border-left" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">Winner</div>
+  {% endif %}
+
+  {% if table.game_state == 'give_1' %}
+    <div class="progress-bar progress-bar-striped progress-bar-animated text-dark" role="progressbar" style="width: 55%" aria-valuenow="55" aria-valuemin="0" aria-valuemax="100">4</div>
+    <div class="progress-bar bg-secondary text-dark border-left" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">Last round!</div>
+    <div class="progress-bar bg-secondary text-dark border-left" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">Winner</div>
+  {% endif %}
+
+  {% if table.game_state == 'give_1_again' %}
+    <div class="progress-bar progress-bar-striped progress-bar-animated text-dark" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">Last round!</div>
+    <div class="progress-bar bg-secondary text-dark border-left" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">Winner</div>
+  {% endif %}
+
+  {% if table.game_state == 'winner' %}
+    <div class="progress-bar progress-bar-striped progress-bar-animated text-dark" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">Winner!</div>
+  {% endif %}
+</div>
+
+<!-- INFO FOR OUT PLAYERS IF GAME IS ON AIR -->
+{% if table.how_many_players <= 1 %}
+    <p class="info-for-out-players text-center text-danger pt-3 pl-3 pr-3">The game was begin if one more player joins to you...</p>
+{% elif table.game_state != ready and request.user.player.state == 'out' %}
+    <p class="info-for-out-players text-center text-danger pt-3 pl-3 pr-3">You will join the game when this round ends</p>
+{% endif %}
+
+<!-- SHOW WINNER -->
+{% if table.game_state == 'winner' and request.user.player.state != 'out' %}
+    <div class="modal-body text-center">
+        The winner is <strong>{{ table.the_winner }}</strong> with <strong>{{ table.the_winner.my_hand }}</strong>
+    </div>
+
+    <div class="text-center">
+        <a href="{% url 'check' %}" class="btn btn-success btn-lg my-0 my-sm-0" onclick="refreshuj()">Play again</a>
+        <a href="{% url 'pass' %}" class="btn btn-danger btn-lg my-0 my-sm-0" onclick="refreshuj()" id="pass_button" style="display: none;">Pass</a>
+    </div>
+<!--{% elif table.game_state == 'winner' and request.user.player.state == 'check' %}
+    <p class="info-for-out-players text-center text-danger pt-3 pl-3 pr-3 m-0">Wait for other player's decision</p>-->
+{% endif %}
+
+<!-- 1. ALL PLAY SCREEN: BOARD AND PLAYERS CARDS -->
+<div class="game-board container p-0 rounded justify-content-center">
+
+<!-- GAME TABLE (table-bordered) -->
+<table class="table table-borderless rounded-lg container p-0 m-0 mb-4">
+  <tbody>
+
+    <!-- POOL -->
+    <tr>
+        <td colspan="2"></td>
+        <td colspan="3" class="pl-1"><h5 class="pool text-secondary">Pool: <span id="pool">{{ table.pool }}</span> $</h5></td>
+    </tr>
+
+    <!-- BOARD -->
+    <tr>
+        <td colspan="2" class="board align-middle text-right p-0">Board</td>
+        <td colspan="3" class="align-middle text-left p-0">
+
+            {% if table.game_state == 'big_blind' or table.game_state == 'small_blind' or table.game_state == 'give_2' or table.game_state == 'ready' %}
+                <span class="d-flex" id="player_cards_{{ forloop.counter }}">
+                    <div class="card bg-dark container-fluid m-1"></div>
+                    <div class="card bg-dark container-fluid m-1"></div>
+                    <div class="card bg-dark container-fluid m-1"></div>
+                    <div class="card bg-dark container-fluid m-1"></div>
+                    <div class="card bg-dark container-fluid m-1"></div>
+                </span>
+            {% elif table.game_state == 'give_3' %}
+                <span class="d-flex">
+                    <span class="d-flex" id="board_cards">{{ table.print_pretty_cards_on_table }}</span>
+                    <div class="card bg-dark container-fluid m-1"></div>
+                    <div class="card bg-dark container-fluid m-1"></div>
+                </span>
+            {% elif table.game_state == 'give_1' %}
+                <span class="d-flex">
+                    <span class="d-flex" id="board_cards">{{ table.print_pretty_cards_on_table }}</span>
+                    <div class="card bg-dark container-fluid m-1"></div>
+                </span>
+            {% else %}
+                <span class="d-flex">
+                    <span class="d-flex" id="board_cards">{{ table.print_pretty_cards_on_table }}</span>
+                </span>
+            {% endif %}
+        </td>
+    </tr>
+
+    <!-- PLAYERS -->
+    {% for player in players_list %}
+
+        <!-- IN GAME -->
+        {% if player.state != 'out' %}
+
+        <!-- Backlight for winner -->
+        {% if table.game_state == 'winner' and table.the_winner == player %}
+        <tr class="bg-success">
+        {% else %}
+        <tr>
+        {% endif %}
+
+          <!-- DEALER -->
+          <td class="dealer align-middle text-right p-0">
+              {% if table.game_state != 'ready' and table.dealer == player %} <span class="badge badge-pill badge-dark text-warning">D</span> {% endif %}
+              <!--{% if table.game_state != 'ready' and table.small_blind == player %} <span class="badge badge-pill badge-warning">S</span> {% endif %}
+              {% if table.game_state != 'ready' and table.big_blind == player %} <span class="badge badge-pill badge-warning">B</span> {% endif %}-->
+          </td>
+
+          <!-- NAME & MONEY -->
+          <td class="name align-middle text-right p-0">
+              {% if player == request.user.player %}<b>{{ player }}</b>{% else %}{{ player }}{% endif %}<br /><sup class="text-muted">{{ player.money }} $</sup>
+          </td>
+
+          <!-- CARDS -->
+          <td class="cards align-middle text-left p-0 d-flex align-items-center">
+
+                <!-- WINNER? Show all cards -->
+                {% if table.game_state == 'winner' %}
+                    <span class="d-flex" id="player_cards_{{ forloop.counter }}">{{ player.print_pretty_cards_cards }}</span>
+                    {{ player.my_hand }}
+
+                <!-- NO? Players can see only itself cards or blank -->
+                {% else %}
+
+                    <!-- Player is me: print my cards -->
+                    {% if player == request.user.player %}
+                        <span class="d-flex" id="player_cards_{{ forloop.counter }}">{{ player.print_pretty_cards_cards }}</span><span class="my-hand">{{ player.my_hand }}</span>
+
+                    <!-- Player is not me: print blank cards-->
+                    {% elif table.game_state != 'ready' and table.game_state != 'small_blind' and table.game_state != 'big_blind' %}
+                        <span class="d-flex" id="player_cards_{{ forloop.counter }}">
+                            <div class="card bg-dark container-fluid m-1"></div>
+                            <div class="card bg-dark container-fluid m-1"></div>
+                        </span>
+
+
+                    {% endif %}
+
+                    <!-- READY, SMALL OR BIG BLIND? -->
+                    {% if table.game_state == 'ready' or table.game_state == 'small_blind' or table.game_state == 'big_blind' %}
+                        <span class="d-flex" id="player_cards_{{ forloop.counter }}">
+                            <div class="card bg-dark container-fluid m-1"></div>
+                            <div class="card bg-dark container-fluid m-1"></div>
+                        </span>
+                    {% endif %}
+
+                {% endif %}
+          </td>
+
+          <!-- RATE -->
+          <td class="rate align-middle text-center p-0" id="player_rate">{{ player.round_money }}</td>
+
+          <!-- STATE -->
+          <td class="state align-middle text-center p-0">
+              <!-- STATE -->
+              <!-- Show who turn is now -->
+              {% if table.decission == player %}
+
+                  <!-- COUNTER -->
+                  <!-- <span id="decision_counter"></span-->
+
+                  <!-- BEFORE: ( ! ) -->
+                  <!--
+                  <div class="spinner-grow spinner-grow-sm align-middle" role="status">
+                      <span class="sr-only">( ! )</span>
+                  </div>-->
+                  <span class="align-middle" id="counter"></span>
+              <!-- If you aren't you, show him status -->
+              {% else %}
+                {% if player.state != 'start' %}
+                    {{ player.state }}
+                {% endif %}
+              {% endif %}
+          </td>
+        </tr>
+
+        <!-- OUT OF GAME -->
+        {% else %}
+
+        <tr style="color: #d9d9d9;">
+
+          <!-- DEALER -->
+          <td class="dealer align-middle text-center p-0" style="width: 12.5%;">
+              {% if table.game_state != 'ready' and table.dealer == player %} D {% endif %}
+              {% if table.game_state != 'ready' and table.small_blind == player %} s {% endif %}
+              {% if table.game_state != 'ready' and table.big_blind == player %} b {% endif %}
+          </td>
+
+          <!-- NAME & MONEY -->
+          <td class="name align-middle text-right p-0" style="width: 31.25%; max-width: 31.25%;">
+              {{ player }}<br /><sup>{{ player.money }} $</sup>
+          </td>
+
+          <!-- CARDS -->
+          <td class="cards align-middle text-left p-0 d-flex align-items-center" style="cursor: default;"></td>
+
+          <!-- RATE -->
+          <td class="rate align-middle text-center p-0" style="width: 12.5%;"></td>
+
+          <!-- STATE -->
+          <td class="state align-middle text-left p-0" style="width: 15.625%;">{{ player.state }}</td>
+        </tr>
+        {% endif %}
+    {% endfor %}
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 2. DECISSION IF YOUR'S TURN -->
+<div class="container-fluid pl-0 pr-0 text-center">
+{% for player in players_list %}
+
+    <!-- CHECK / CALL / RAISE -->
+    {% if request.user.player.table.game_state != 'winner' %}
+        {% if request.user.player == player and table.decission == player %}
+
+            <form action="/raise/" method="POST" class="float-none d-inline text-center">{% csrf_token %}
+
+                <div class="form-group p-1 text-center">
+
+                    <div class="input-group text-center">
+                        <input class="form-control text-center" style="display: none;" id="how_much" name="how_much" type="number" value="{{ table.biggest_rate|subtract:request.user.player.round_money }}" min="{{ table.biggest_rate|subtract:request.user.player.round_money }}" max="{{ request.user.player.money }}">
+                        <div class="input-group-append" style="display: none;">
+                            <span class="input-group-text" id="basic-addon2">$</span>
+                        </div>
+                    </div>
+
+                    <!-- Earlier in range min="{{ table.biggest_rate|subtract:request.user.player.round_money }}" -->
+                    <input type="range" class="custom-range form-control-range" min="{{ table.biggest_rate|subtract:request.user.player.round_money }}" max="{{ request.user.player.money }}" value="{{ table.biggest_rate|subtract:request.user.player.round_money }}" id="formControlRange">
+                </div>
+
+                <!-- 1. Span is for JS functionality -->
+                <span id="raise_button"></span>
+            </form>
+
+            <!-- 2. Span is for JS functionality -->
+            <span id="check_call_buttons">
+            <!-- This button shows when all players have the same round_money -->
+            {% if request.user.player.round_money == table.biggest_rate %}
+                <a href="{% url 'check' %}" class="btn btn-lg btn-success" id="check_button" onclick="refreshuj()">check</a>
+                <!-- This button shows when you have to add to game pool  -->
+            {% else %}
+                <a href="{% url 'check' %}" class="btn btn-lg btn-success" id="call_button" onclick="refreshuj()">{{ table.biggest_rate|subtract:request.user.player.round_money }} call</a>
+            {% endif %}
+            </span>
+
+        {% endif %}
+    {% endif %}
+
+    <!-- PASS -->
+    {% if request.user.player.table.game_state != 'winner' %}
+        {% if request.user.player == player and table.decission == player %}
+            <a href="{% url 'pass' %}" class="btn btn-lg btn-danger" id="pass_button" onclick="refreshuj()">pass</a>
+        {% endif %}
+    {% endif %}
+{% endfor %}</div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p style="display: none;">game state: <span id="game_state">{{ table.game_state }}</span></p>
+<p style="display: none;">who decide: <span id="who_decide">{{ table.decission }}</span></p>
+<p style="display: none;">who am i: <span id="who_am_i">{{ request.user.player }}</span></p>
+<p style="display: none;">table pk for js: <span id="table_pk"></span></p>
+
+<script>
+    // BEEP SOUND
+    var audio = new Audio('/static/game/beep1.wav');
+    function beep() {
+        audio.play();
+    }
+
+    // SET ROOM_PK FROM TABLE PK
+    var room_pk = {{ table.pk }};
+    var who_decide = document.getElementById("who_decide").innerHTML;
+    var who_am_i = document.getElementById("who_am_i").innerHTML;
+    document.getElementById("table_pk").innerHTML = room_pk;
+
+    // WEBSOCKET
+    var chatSocket = new WebSocket(
+        'ws://' + window.location.host +
+        '/ws/chat/' + room_pk + '/'); /*********************************/
+
+    // GET MESSAGE
+    chatSocket.onmessage = function(e) {
+        var data = JSON.parse(e.data);
+        var message = data['message'];
+        setTimeout(function(){
+            document.getElementById("counter").innerHTML = message;
+            if (message == 'end') {
+                document.getElementById('refresh').click();
+                };
+        }, 300);
+    };
+
+    // ERROR
+    chatSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    // SEND MESSAGE IF BUTTON.click()
+    function refreshuj() {
+        var message = 'end';
+        chatSocket.send(JSON.stringify({
+            'message': message
+        }));
+        setTimeout(function(){
+            document.getElementById('refresh').click();
+        }, 500);
+    };
+
+    // COUNTER FOR NON DECISION ONLY FOR PLAYER WHOSE ROUND IS
+    if (who_decide == who_am_i) {
+        var start = 15;
+        var refreshIntervalId = setInterval(function(){
+            start -= 1;
+            document.getElementById("counter").innerHTML = start;
+            chatSocket.send(JSON.stringify({
+                'message': start
+            }));
+
+            // Beep if timer is < 10
+            if (start < 10) { beep(); };
+
+            if (start < 1) {
+                clearInterval(refreshIntervalId);
+                document.getElementById("pass_button").click();
+            };
+        }, 1000);
+    }
+
+    // REFRESH SITE EVERY 2 SECONDS IF ONLY 1 PLAYER IS ON THE TABLE
+    var game_state = document.getElementById("game_state").innerHTML;
+    if ({{ table.how_many_players }} < 2 /*|| game_state == 'winner' */|| game_state == 'ready') {
+        var startrefresh = setInterval(function(){
+            if ({{ table.how_many_players }} > 1) {
+                clearInterval(startrefresh);
+            }
+            document.getElementById('refresh').click();
+        }, 1000);
+    }
+
+</script>
+
+
+
+
+
+
+
+
+
+{% endblock %}

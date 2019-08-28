@@ -1,0 +1,148 @@
+body {
+    background: #eee;
+}
+
+.navbar {
+    height: 3em;
+}
+
+.progress {
+    cursor: default;
+}
+
+.btn-group {
+    padding-right: 0.25em;
+}
+
+.login-form {
+    max-width: 320px;
+}
+
+.form-notifications {
+    font-size: 0.8em;
+}
+
+.top-100-container {
+    max-width: 12em;
+}
+
+.play-as-a-guest-div {
+    padding-left: 0.25em;
+}
+
+.play-as-a-guest-button {
+    /*
+    transition: background-color 1s cubic-bezier(1, 1, 1, 1);
+	transition-delay: 0s;
+	border: 0px; */
+}
+
+#hideAll {
+    position: fixed;
+    left: 0px;
+    right: 0px;
+    top: 0px;
+    bottom: 0px;
+    background-color: white;
+    z-index: 99; /* Higher than anything else in the document */
+    opacity: 1;
+    transition: opacity 0.5s;
+    display: block;
+}
+
+.pool {
+    cursor: default;
+}
+
+table {
+    cursor: default;
+}
+
+table tr {}
+
+table tr td.dealer {
+    width: 12.5%;
+}
+
+table tr td.name {
+    width: 31.25%;
+    max-width: 31.25%;
+}
+
+table tr td.cards {
+}
+
+table tr td.rate {
+    width: 30px;
+    max-width: 30px;
+}
+
+table tr td.state {
+    width: 40px;
+    max-width: 40px;
+}
+
+.board {
+    font-size: 0.8em;
+}
+
+.card {
+    width: 2em;
+    height: 3em;
+}
+
+.game-board {
+    max-width: 320px;
+    font-size: 1em;
+}
+
+.dealer {
+    font-size: 0.7em;
+}
+
+.name {
+    font-size: 0.8em;
+}
+
+.my-hand {
+    font-size: 0.8em;
+}
+
+.rate {
+    font-size: 0.8em;
+}
+
+.state {
+    font-size: 0.8em;
+}
+
+.info-for-out-players {
+    font-size: 0.8em;
+}
+
+@media only screen and (min-width: 320px) {
+    .game-board {
+        max-width: 320px;
+        font-size: 1em;
+    }
+    .pool {
+        font-size: 1.8em;
+    }
+}
+
+@media only screen and (min-width: 768px) {
+    .game-board {
+        max-width: 768px;
+        font-size: 1.8em;
+        /* display: flex; */ /** This sets up decisions next to game-board **/
+    }
+    .pool {
+        font-size: 2.2em;
+
+        margin-top: 30px;
+        margin-bottom: 30px;
+    }
+    .info-for-out-players {
+        font-size: 1.6em;
+    }
+}

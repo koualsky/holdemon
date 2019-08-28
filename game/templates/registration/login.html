@@ -1,0 +1,47 @@
+{% extends "game/base.html" %}
+
+{% block content %}
+
+<nav class="navbar navbar-dark bg-dark p-0 m-0">
+    <a href="{% url 'start' %}" class="navbar-text text-light my-0 my-sm-0 pl-3">Start</a>
+    <div class="btn-group">
+        <a href="{% url 'login' %}" class="btn btn-success my-0 my-sm-0">Login</a>
+        <a href="{% url 'register' %}" class="btn btn-primary my-0 my-sm-0">Register</a>
+    </div>
+</nav>
+
+<!-- <form method="post" action="{% url 'login' %}"> -->
+<form method="post" class="login-form text-center container align-items-center align-middle">{% csrf_token %}
+    <div class="form-group p-3 text-secondary">
+
+        <div class="form-notifications">
+            {% if form.errors %}
+            <p>Your username and password didn't match. Please try again.</p>
+            {% endif %}
+        </div>
+
+        {% if next %}
+            {% if user.is_authenticated %}
+            <p>Your account doesn't have access to this page. To proceed,
+            please login with an account that has access.</p>
+            {% else %}
+            <p>Please login to see this page.</p>
+            {% endif %}
+        {% endif %}
+
+
+        <!--{{ form.username }}
+        {{ form.password }}-->
+
+        <input type="text" name="username" maxlength="10" placeholder="Username" autofocus required class="form-control m-1"/>
+        <input type="password" name="password" placeholder="Password" required class="form-control m-1" />
+
+        <input type="submit" value="Login" class="btn btn-primary ml-1">
+        <input type="hidden" name="next" value="{{ next }}">
+
+        {# Assumes you setup the password_reset view in your URLconf #}
+        <a href="{% url 'password_reset' %}" class="btn btn-primary">Lost password?</a>
+    </div>
+</form>
+
+{% endblock %}

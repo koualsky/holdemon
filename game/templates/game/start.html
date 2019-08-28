@@ -1,0 +1,48 @@
+{% extends "game/base.html" %}
+
+{% block content %}
+
+<nav class="navbar navbar-dark bg-dark p-0 m-0">
+{% if user.is_authenticated %}
+
+    <a class="navbar-text text-light pl-3" style="cursor: default;">{{ user }}: <span id="player_money">{{ request.user.player.money }}</span> $</a>
+    <div class="btn-group">
+        <a href="{% url 'play' %}" class="btn btn-success my-0 my-sm-0" onclick="refreshuj()">Play</a>
+        <a href="{% url 'logout' %}" class="btn btn-danger my-0 my-sm-0">Logout</a>
+    </div>
+
+{% else %}
+    <!-- <a class="navbar-text text-light pl-3" style="cursor: default;"></a> -->
+
+    <!-- PLAY AS A GUEST BUTTON -->
+    {% if not user.is_authenticated %}
+    <div class="play-as-a-guest-div text-center">
+        <a href="{% url 'play_as_a_guest' %}" class="play-as-a-guest-button btn btn-danger pl-4 pr-4" id="play-as-a-guest-button">Play as a guest</a>
+    </div>
+    {% endif %}
+
+    <div class="btn-group">
+        <a href="{% url 'login' %}" class="btn btn-success my-0 my-sm-0">Login</a>
+        <a href="{% url 'register' %}" class="btn btn-primary my-0 my-sm-0">Register</a>
+    </div>
+
+{% endif %}
+</nav>
+
+<div class="top-100-container container p-0 justify-content-center text-secondary">
+
+        <h2 class="text-center p-4 text-secondary" style="cursor: default;">Top 20</h2>
+
+    <!-- TOP 100 TABLE -->
+    <table class="table table-borderless container p-0 m-0">
+    {% for player in best_players %}
+        <tr>
+            <td class="align-middle text-right text-secondary p-1 m-0" style="width: 2em;">{{ forloop.counter }}</td>
+            <td class="align-middle text-right text-secondary p-1 m-0">{{ player }}</td>
+            <td class="align-middle text-right text-secondary p-1 m-0" style="width: 4em;">{{ player.money }} $</td>
+        </tr>
+    {% endfor %}
+    </table>
+</div>
+
+{% endblock %}
