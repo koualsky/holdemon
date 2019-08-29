@@ -9,6 +9,9 @@ channels = "*"
 channels-redis = "*"
 django-heroku = "*"
 daphne = "*"
+treys = "*"
+pywin32 = "*"
+psycopg2-binary = "*"
 
 [dev-packages]
 
