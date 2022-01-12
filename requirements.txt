@@ -17,7 +17,7 @@ hyperlink==18.0.0
 idna==2.7
 incremental==17.5.0
 msgpack==0.5.6
-pipenv==2018.11.26
+pipenv==2022.1.8
 psycopg2==2.7.5
 psycopg2-binary==2.8.3
 PyHamcrest==1.9.0
